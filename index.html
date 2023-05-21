@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>My tOOlS</title>
+    <link rel="stylesheet" href="style.css">
+
+  </head>
+  <body>
+<main class="page-container">	
+	<h1>Hello!</h1>
+<h2>Choose your fate</h2>
+	<section>
+<div class="operations"> 
+			<div class="operation">
+				<h3>🤪 ops</h3>
+				<div class="btn-layout">
+					<!-- <label title="load and proccess excel file" for="smileFile-btn">Load XLSX</label>  -->
+					<!-- <input type="file" id="smileFile" accept=".xlsx"> -->
+					<!-- <button onclick="processSmileFile(document.getElementById('smileFile').files[0])">GO!</button> -->
+<!-- <label for="smileFile-btn">Load XLSX File:</label>-->
+<!-- <input type="file" id="smileFile" accept=".xlsx">-->
+<!-- <button onclick="processSmileFile(document.getElementById('smileFile').files[0])">GO!</button>-->
+
+					<!-- <button onclick="processFile(document.getElementById('smileFile').files[0]), 'output.xlsx', 'הוכנס לטיפול', ['A', 'B', 'D'])">New GO!</button> -->
+<input type="file" id="file-input" />
+<button onclick="processFile()">Process</button>
+					<button onclick="splitCsvFile()" title="Split Csv File to 499 rows per file">(2) Split CSV (TEMP)</button>
+
+				</div>
+			</div>
+
+			<div class="operation">
+				<h3>מסיימי מבצע</h3>
+				<div class="btn-layout">
+
+					<form>
+						<label title="load and proccess excel file for="file1">דוח389</label> 
+						<input type="file" id="r389" accept=".xlsx"><br></br>
+
+						<label title="load and proccess excel file for="file2">Index</label> 
+						<input type="file" id="indexFile"  accept=".xlsx"><br></br>
+
+						<label title="load and proccess excel file for="file3">קודים לשכפול</label> 
+						<input type="file" id="codes" accept=".xlsx"><br></br>
+				</div>
+	<div class="container">
+		<label class="radio">	
+			<input type="radio" name="option" value="C1" onchange="handleCycle(event.target)"> Cycle 1
+		</label>
+		<label class="radio">
+			<input type="radio" name="option" value="C16" onchange="handleCycle(event.target)"> Cycle 16
+		</label>
+
+	</div>
+<button> RUN MF RUN!</button>
+<button onclick="clearFiles()"> Clear files</button>
+			</div>
+		
+	<div class="operation">
+		<h3>Dream Card</h3>
+		<input type="file" id="dream-file" />
+		<button onclick="loadDream()">Dream on</button>
+	
+	</section>
+
+</main>    
+  	<!-- <script src="script.js"></script>  -->
+	<!-- <script src="prSmile.js"></script> -->
+	<script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+	
+	<!-- <script src="EndPromos.js"></script> -->
+	<!-- <script src="sndSmile.js"></script> -->
+	<script src="dream.js"></script>
+	<script src="split.js"></script>
+	<script src="smileProm2.js"></script>
+	
+  </body>
+</html>

@@ -1,0 +1,24 @@
+
+.page-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.page-container > section {
+	display: flex;
+}
+
+.operation {
+	border: 1px solid black;
+	display: flex;
+	flex-direction: column;
+    	align-items: center;
+	margin-bottom: 10px;
+	padding-bottom: 10px;
+	//background: no-repeat 5% / 100% 100% url(HotNewLogo.svg.png);
+}
+
+.btn-layout {
+	display: flex;
+}
