@@ -27,24 +27,28 @@ function processWorksheet(worksheet) {
     const cellValue = cell.w || cell.v; // Get the cell value, considering both formula and raw value
     
     if (cellValue === 'מס אתר בילי') {
-	console.log(cellValue )
+      console.log(cellValue)
       const columnName = cellAddress.match(/[A-Z]+/)[0];
       headers[columnName] = cellAddress;
-	console.log('header is: ', headers)
-	console.log('cellAd is: ', cellAddress)
+      console.log('header is: ', headers)
+      console.log('cellAd is: ', cellAddress)
       break; // Assuming the header appears only once, exit loop once found
     }
   }
   
-  // Call the function to log duplicate values
-  logDuplicates(worksheet, headers);
+  const categoryColumnLetter = 'W'; // Replace with your desired category column letter
+  
+  // Call the function to log duplicate values and category counts
+  logDuplicates(worksheet, headers, categoryColumnLetter);
 }
 
 // Log row numbers where values in the specified column repeat two or more times
-function logDuplicates(worksheet, headers) {
+function logDuplicates(worksheet, headers, categoryColumnLetter) {
   const columnLetter = Object.keys(headers)[0];
   const columnAddress = headers[columnLetter];
   const columnValues = {};
+
+  const categoryColumnIndex = XLSX.utils.decode_col(categoryColumnLetter);
 
   const columnRange = XLSX.utils.decode_range(worksheet['!ref']);
   const columnIndex = XLSX.utils.decode_col(columnLetter);
@@ -73,7 +77,30 @@ function logDuplicates(worksheet, headers) {
       console.log('Value:', value);
       console.log('Count:', count);
       console.log('Row numbers:', rows.join(', '));
+
+      // Check the category values for the rows with duplicate values
+      const categoryCounts = {
+        INT: 0,
+        TV: 0,
+        TEL: 0
+      };
+
+      for (const rowNumber of rows) {
+        const cellAddress = XLSX.utils.encode_cell({ r: rowNumber - 1, c: categoryColumnIndex });
+        const cell = worksheet[cellAddress];
+        const categoryValue = cell.w || cell.v;
+
+        if (categoryValue === 'INT' || categoryValue === 'TV' || categoryValue === 'TEL') {
+          categoryCounts[categoryValue]++;
+        }
+      }
+
+      console.log('Category Counts:', categoryCounts);
       console.log('-------------------------');
     }
+  }
+
+  if (categoryColumnLetter) {
+    console.log('Category Column Letter:', categoryColumnLetter);
   }
 }
