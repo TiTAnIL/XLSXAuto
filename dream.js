@@ -1,6 +1,6 @@
 // Load and read Excel file
 function loadDream() {
-  preventDefault();
+  event.preventDefault();
   var fileInput = document.getElementById('dream-file');
   var file = fileInput.files[0];
   var reader = new FileReader();
@@ -67,7 +67,7 @@ function logDuplicates(worksheet, headers, categoryColumnLetter) {
           count: 1,
           rows: [rowIndex + 1], // Add 1 to rowIndex to display 1-based row numbers
         };
-      }ק
+      }
     }
   }
 
