@@ -1,6 +1,6 @@
 // Load and read Excel file
 function loadDream() {
-  event.preventDefault();
+  preventDefault();
   var fileInput = document.getElementById('dream-file');
   var file = fileInput.files[0];
   var reader = new FileReader();
@@ -52,7 +52,7 @@ function logDuplicates(worksheet, headers, categoryColumnLetter) {
 
   const columnRange = XLSX.utils.decode_range(worksheet['!ref']);
   const columnIndex = XLSX.utils.decode_col(columnLetter);
-  
+
   for (let rowIndex = columnRange.s.r; rowIndex <= columnRange.e.r; rowIndex++) {
     const cellAddress = XLSX.utils.encode_cell({ r: rowIndex, c: columnIndex });
     const cell = worksheet[cellAddress];
@@ -74,9 +74,9 @@ function logDuplicates(worksheet, headers, categoryColumnLetter) {
   for (const value in columnValues) {
     const { count, rows } = columnValues[value];
     if (count >= 2) {
-      console.log('Value:', value);
-      console.log('Count:', count);
-      console.log('Row numbers:', rows.join(', '));
+      // console.log('Value:', value);
+      // console.log('Count:', count);
+      // console.log('Row numbers:', rows.join(', '));
 
       // Check the category values for the rows with duplicate values
       const categoryCounts = {
@@ -95,12 +95,12 @@ function logDuplicates(worksheet, headers, categoryColumnLetter) {
         }
       }
 
-      console.log('Category Counts:', categoryCounts);
-      console.log('-------------------------');
+      // console.log('Category Counts:', categoryCounts);
+      // console.log('-------------------------');
     }
   }
 
   if (categoryColumnLetter) {
-    console.log('Category Column Letter:', categoryColumnLetter);
+    // console.log('Category Column Letter:', categoryColumnLetter);
   }
 }
