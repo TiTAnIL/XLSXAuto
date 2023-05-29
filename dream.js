@@ -52,7 +52,7 @@ function logDuplicates(worksheet, headers, categoryColumnLetter) {
 
   const columnRange = XLSX.utils.decode_range(worksheet['!ref']);
   const columnIndex = XLSX.utils.decode_col(columnLetter);
-
+  
   for (let rowIndex = columnRange.s.r; rowIndex <= columnRange.e.r; rowIndex++) {
     const cellAddress = XLSX.utils.encode_cell({ r: rowIndex, c: columnIndex });
     const cell = worksheet[cellAddress];
