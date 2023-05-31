@@ -9,8 +9,8 @@
 </head>
 
 <body>
-	<button onclick="test()">test</button>
-	<div class="work-timer">
+
+	<div class="work-timer fixed-pos">
 		<h1>Worktime Counter</h1>
 		<form id="countdownForm">
 			<label for="meet">Till the great escape: </label>
@@ -21,8 +21,10 @@
 		<div id="countdown"></div>
 	</div>
 	<main class="page-container">
+<div class="page-header">
 		<h1>Hello!</h1>
 		<h2>Choose your fate</h2>
+</div>	
 		<section>
 			<div class="operations">
 
@@ -76,8 +78,20 @@
 					<h3>Dream Card</h3>
 					<input type="file" id="dream-file" />
 					<button onclick="loadDream()">Dream on</button>
+	</div>
+		
+	<div class="operation">
+		<h3>ועדים</h3>
+		<input type="file" id="unions" />
+		<button onclick="loadUnions()">Go!</button>
+	</div>
 
-		</section>
+	<div class="operation">
+		<h3>Netflix</h3>
+		<input type="file" id="netflix" />
+		<button onclick="testFlix()">Go!</button>
+	</div>
+</section>
 
 	</main>
 	<!-- <script src="script.js"></script>  -->
@@ -86,7 +100,7 @@
 
 	<!-- <script src="EndPromos.js"></script> -->
 	<!-- <script src="sndSmile.js"></script> -->
-	<script src="test.js"></script>
+	<script src="netflix.js"></script>
 	<script src="timer.js"></script>
 	<script src="dream.js"></script>
 	<script src="split.js"></script>
