@@ -24,11 +24,12 @@
 }
 
 .work-timer {
+	position: fixed;
 	animation: blink-red 1s infinite;
   }
 
   .warning {
-	/* position: fixed; */
+	position: fixed;
   }
   
   .work-timer.warning {
