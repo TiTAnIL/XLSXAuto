@@ -55,7 +55,7 @@ function processFile() {
         var modifiedRows = [];
         var deletedRows = [];
 
-        for (var i = 1; i < jsonData.length; i++) {
+        for (var i = 0; i < jsonData.length; i++) {
           var row = jsonData[i];
           var hasValue = false;
 
@@ -77,7 +77,7 @@ function processFile() {
 
               modifiedRow['הוכנס טיפול'] = row[colTreat];
               modifiedRow['מספר אתר לפניה'] = row[colSiteNumInq];
-              modifiedRow['מספר אתר'] = row[colSiteNum];
+             // modifiedRow['מספר אתר'] = row[colSiteNum];
               modifiedRow['תז נציג יוצר פניה'] = row[colRepId];
               modifiedRow['מספר פניה'] = row[colInqNum];
 
@@ -86,17 +86,18 @@ function processFile() {
           }
         }
 
+
         // Log the deleted rows
-        console.log('Deleted Rows:', deletedRows);
+       // console.log('Deleted Rows:', deletedRows);
 
         // Log the modified rows
-        console.log('Modified Rows:', modifiedRows);
+        // console.log('Modified Rows:', modifiedRows);
 
         // Step 9: Save each modified sheet as a separate file
         if (modifiedRows.length > 0) {
           var newWorkbook = XLSX.utils.book_new();
           var newSheet = XLSX.utils.json_to_sheet(modifiedRows, {
-            header: ['הוכנס טיפול', 'מספר אתר לפניה', 'מספר אתר', 'תז נציג יוצר פניה', 'מספר פניה']
+            header: ['מספר אתר לפניה', 'תז נציג יוצר פניה', 'מספר פניה']
           });
 
           XLSX.utils.book_append_sheet(newWorkbook, newSheet, sheetName);
