@@ -1,82 +1,124 @@
+function downloadFile(data, filename) {
+  var csvContent = 'data:text/csv;charset=utf-8,%EF%BB%BF' + encodeURIComponent(data);
+  var currentTime = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+  var formattedFilename = filename + currentTime.replace(':', '');
+  var link = document.createElement('a');
+  link.setAttribute('href', csvContent);
+  link.setAttribute('download', formattedFilename + '.csv');
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
 
-
-// function to process the input file
-function processSmileFile(file) {
-  // load the xlsx file
+function processFile() {
+  var fileInput = document.getElementById('file-input');
+  var file = fileInput.files[0];
   var reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = function (e) {
     var data = new Uint8Array(e.target.result);
-    var workbook = XLSX.read(data, {type: 'array'});
+    var workbook = XLSX.read(data, { type: 'array' });
 
-    // process each sheet
-    workbook.SheetNames.forEach(function(sheetName) {
-      var sheet = workbook.Sheets[sheetName];
-      // locate the headers and store their column letters
-      var headerCols = findHeaderCols(sheet);
-      // locate and process the rows with empty cells under the 'כללי שירות' header
-      var dataRows = findDataRows(sheet, headerCols);
-	console.log(dataRows)
+    for (var sheetName in workbook.Sheets) {
+      if (workbook.Sheets.hasOwnProperty(sheetName)) {
+        var sheet = workbook.Sheets[sheetName];
+        var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        var headerRow = jsonData[3];
+        var colTreat, colSiteNumInq, colSiteNum, colRepId, colInqNum;
 
-      // create and write the output file for this sheet
-      writeOutputFile(sheetName, dataRows);
-    });
+        headerRow.forEach(function (headerCellValue, index) {
+          switch (headerCellValue) {
+            case 'הוכנס טיפול':
+              colTreat = index;
+              break;
+            case 'מספר אתר לפניה':
+              colSiteNumInq = index;
+              break;
+            case 'תז נציג יוצר פניה':
+              colRepId = index;
+              break;
+            case 'מספר פניה':
+              colInqNum = index;
+              break;
+            default:
+              break;
+          }
+        });
+
+        var uniqueValues = new Set();
+        var modifiedRows = [];
+
+        for (var i = 0; i < jsonData.length; i++) {
+          var row = jsonData[i];
+          var hasValue = false;
+
+          if (row[colTreat]) {
+            hasValue = true;
+          }
+
+          var siteNumInq = row[colSiteNumInq];
+          var repId = row[colRepId];
+
+          if (typeof row[colInqNum] !== 'undefined' && typeof siteNumInq !== 'undefined' && typeof repId !== 'undefined') {
+            if (!uniqueValues.has(siteNumInq)) {
+              if (hasValue) {
+                // Add the row to the deleted rows array
+                // deletedRows.push(row);
+              } else {
+                uniqueValues.add(siteNumInq);
+                var modifiedRow = {};
+
+                modifiedRow['מספר פניה'] = row[colInqNum];
+                modifiedRow['מספר אסמכתא'] = '';
+                modifiedRow['מספר לקוח'] = '';
+                modifiedRow['מספר אתר'] = siteNumInq;
+                modifiedRow['קוד מהיר'] = '';
+                modifiedRow['מחלקה'] = '';
+                modifiedRow['תחום'] = '';
+                modifiedRow['סיווג ראשי'] = '';
+                modifiedRow['סיווג משני'] = '';
+                modifiedRow['סיווג מפורט'] = '';
+                modifiedRow['תקציר'] = '';
+                modifiedRow['גורם מטפל'] = '';
+                modifiedRow['נציג מטפל'] = repId;
+		modifiedRow['מספר פק"ע'] = '';
+		modifiedRow['פניה מקושרת'] = '';
+		modifiedRow['זיהוי נציג מוכר'] = '';
+                modifiedRow['זיהוי טיפול'] = sheetName === 'CSR' ? 31250 : 31251;
+                modifiedRow['תקציר טיפול'] = '';
+                modifiedRow['OPRID'] = repId;
+                modifiedRow['תאריך יצירה'] = '';
+                modifiedRow['ללא יצירת פניה חוזרת'] = '';
+                modifiedRow['חשבונות משניים'] = '';
+		modifiedRow['קוד מבצע'] = '';
+		modifiedRow['תאריך סיום'] = '';
+                modifiedRows.push(modifiedRow);
+              }
+            }
+          }
+        }
+
+        if (modifiedRows.length > 0) {
+          var csvContent = '';
+
+          csvContent += 'מספר פניה,מספר אסמכתא,מספר לקוח,מספר אתר,קוד מהיר,מחלקה,תחום,סיווג ראשי,סיווג משני,סיווג מפורט,תקציר,גורם מטפל,נציג מטפל,מספר פק"ע,פניה מקושרת,זיהוי נציג מוכר,זיהוי טיפול,תקציר טיפול,OPRID,תאריך יצירה,ללא יצירת פניה חוזרת,חשבונות משניים,קוד מבצע,תאריך סיום מבצע\n';
+
+          for (var i = 0; i < modifiedRows.length; i++) {
+            var row = modifiedRows[i];
+            csvContent += Object.values(row).map(cell => {
+  if (typeof cell === 'string' && cell.startsWith('0')) {
+    return '="' + cell + '"';
+  }
+  return cell;
+}).join(',') + '\n';
+
+	
+          }
+  downloadFile(csvContent, sheetName);
+        }
+      }
+    }
   };
+
   reader.readAsArrayBuffer(file);
-}
-
-// function to find the header columns
-function findHeaderCols(sheet) {
-  var headerCols = {};
-  var range = XLSX.utils.decode_range(sheet['!ref']);
-
-  // iterate over the range of cells in the sheet
-  for (var col = range.s.c; col <= range.e.c; col++) {
-    var cellAddress = XLSX.utils.encode_cell({r: 3, c: col});
-    var cell = sheet[cellAddress];
-	console.log('cell', cell.v )
-    // check if the cell value matches the header name
-    if (cell && cell.v === 'כללי שירות') {
-      // store the column letter for the header and the other columns of interest
-	console.log('column', XLSX.utils.encode_col(col))
-      headerCols.service = XLSX.utils.encode_col(col);
-      headerCols.case = XLSX.utils.encode_col(col + 1);
-      headerCols.site = XLSX.utils.encode_col(col + 2);
-
-      break;
-    }
-  }
-console.log('headeCols',headerCols)
-  return headerCols;
-}
-
-// function to find the rows with empty cells under the 'כללי שירות' header
-function findDataRows(sheet, headerCols) {
-  var dataRows = [];
-
-  // iterate over the range of cells in the sheet
-  var range = XLSX.utils.decode_range(sheet['!ref']);
-  for (var row = range.s.r; row <= range.e.r; row++) {
-    var cellAddress = XLSX.utils.encode_cell({r: row, c: headerCols.service});
-    var serviceCell = sheet[cellAddress];
-
-    // check if the cell value is empty and the row is not a header or footer row
-    if (serviceCell && !serviceCell.v && row > 3 && row < range.e.r) {
-      var dataRow = {};
-	console.log('1')
-      // store the values under the columns of interest
-      dataRow.case = sheet[XLSX.utils.encode_cell({r: row, c: headerCols.case})].v;
-      dataRow.site = sheet[XLSX.utils.encode_cell({r: row, c: headerCols.site})].v;
-	console.log(dataRow)
-      dataRows.push(dataRow);
-    }
-  }
-  return dataRows;
-}
-
-// function to write the output file for the sheet
-function writeOutputFile(sheetName, data) {
-  var worksheet = XLSX.utils.json_to_sheet(data);
-  var workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
-  XLSX.writeFile(workbook, sheetName + ".xlsx");
 }
