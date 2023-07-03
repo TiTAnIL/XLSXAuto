@@ -11,8 +11,8 @@ function downloadFile(data, filename) {
   document.body.removeChild(link);
 }
 
-function processFile() {
-  var fileInput = document.getElementById('file-input');
+function processSmiley() {
+  var fileInput = document.getElementById('smileyOpsFile');
   var file = fileInput.files[0];
   var reader = new FileReader();
   reader.onload = function (e) {

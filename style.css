@@ -7,7 +7,6 @@
 
 .page-container > section {
 	display: flex;
-
 }
 
 .page-header {
@@ -79,3 +78,17 @@
 
 .fixed-pos {
 	position: fixed;
+}
+
+
+.highlight {
+  background-color: red;
+}
+
+.highlight-green {
+	background-color: lightgreen;
+}
+
+.completed {
+	background-color: lightgray;
+}
