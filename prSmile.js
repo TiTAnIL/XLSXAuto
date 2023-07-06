@@ -1,15 +1,14 @@
 function downloadFile(data, filename) {
   var csvContent = 'data:text/csv;charset=utf-8,%EF%BB%BF' + encodeURIComponent(data);
-  var currentTime = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
-  var formattedFilename = filename + currentTime.replace(':', '');
   var link = document.createElement('a');
   link.setAttribute('href', csvContent);
-  link.setAttribute('download', formattedFilename + '.csv');
+  link.setAttribute('download', filename + '.csv');
   link.style.display = 'none';
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
 }
+
 
 function processSmiley() {
   var fileInput = document.getElementById('smileyOpsFile');
@@ -81,17 +80,17 @@ function processSmiley() {
                 modifiedRow['תקציר'] = '';
                 modifiedRow['גורם מטפל'] = '';
                 modifiedRow['נציג מטפל'] = repId;
-		modifiedRow['מספר פק"ע'] = '';
-		modifiedRow['פניה מקושרת'] = '';
-		modifiedRow['זיהוי נציג מוכר'] = '';
+                modifiedRow['מספר פק"ע'] = '';
+                modifiedRow['פניה מקושרת'] = '';
+                modifiedRow['זיהוי נציג מוכר'] = '';
                 modifiedRow['זיהוי טיפול'] = sheetName === 'CSR' ? 31250 : 31251;
                 modifiedRow['תקציר טיפול'] = '';
                 modifiedRow['OPRID'] = repId;
                 modifiedRow['תאריך יצירה'] = '';
                 modifiedRow['ללא יצירת פניה חוזרת'] = '';
                 modifiedRow['חשבונות משניים'] = '';
-		modifiedRow['קוד מבצע'] = '';
-		modifiedRow['תאריך סיום'] = '';
+                modifiedRow['קוד מבצע'] = '';
+                modifiedRow['תאריך סיום'] = '';
                 modifiedRows.push(modifiedRow);
               }
             }
@@ -99,22 +98,26 @@ function processSmiley() {
         }
 
         if (modifiedRows.length > 0) {
-          var csvContent = '';
+          var MAX_ROWS_PER_FILE = 499; // Maximum number of rows per file
+          var numFiles = Math.ceil(modifiedRows.length / MAX_ROWS_PER_FILE); // Calculate the number of files required
 
-          csvContent += 'מספר פניה,מספר אסמכתא,מספר לקוח,מספר אתר,קוד מהיר,מחלקה,תחום,סיווג ראשי,סיווג משני,סיווג מפורט,תקציר,גורם מטפל,נציג מטפל,מספר פק"ע,פניה מקושרת,זיהוי נציג מוכר,זיהוי טיפול,תקציר טיפול,OPRID,תאריך יצירה,ללא יצירת פניה חוזרת,חשבונות משניים,קוד מבצע,תאריך סיום מבצע\n';
+          for (var fileIndex = 0; fileIndex < numFiles; fileIndex++) {
+            var start = fileIndex * MAX_ROWS_PER_FILE;
+            var end = start + MAX_ROWS_PER_FILE;
+            var modifiedRowsSubset = modifiedRows.slice(start, end);
 
-          for (var i = 0; i < modifiedRows.length; i++) {
-            var row = modifiedRows[i];
-            csvContent += Object.values(row).map(cell => {
-  if (typeof cell === 'string' && cell.startsWith('0')) {
-    return '="' + cell + '"';
-  }
-  return cell;
-}).join(',') + '\n';
+            var csvContent = '';
+            csvContent += 'מספר פניה,מספר אסמכתא,מספר לקוח,מספר אתר,קוד מהיר,מחלקה,תחום,סיווג ראשי,סיווג משני,סיווג מפורט,תקציר,גורם מטפל,נציג מטפל,מספר פק"ע,פניה מקושרת,זיהוי נציג מוכר,זיהוי טיפול,תקציר טיפול,OPRID,תאריך יצירה,ללא יצירת פניה חוזרת,חשבונות משניים,קוד מבצע,תאריך סיום מבצע\n';
+            csvContent += modifiedRowsSubset.map(row => Object.values(row).join(',')).join('\n') + '\n';
 
-	
+            var currentTime = new Date().toLocaleTimeString('en-US', {
+              hour12: false,
+              hour: '2-digit',
+              minute: '2-digit',
+            });
+            var formattedFilename = sheetName + '_' + currentTime.replace(':', '') + '_' + (fileIndex + 1);
+            downloadFile(csvContent, formattedFilename);
           }
-  downloadFile(csvContent, sheetName);
         }
       }
     }

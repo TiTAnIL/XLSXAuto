@@ -15,10 +15,11 @@
        		<form id="countdownForm">
             		<label for="meet">Till the great escape: </label>
             		<input type="time" id="time1" value="--:--">
-            		<button type="submit">Go</button>
+            		<button type="submit" onclick="handleGoBtnClick('countdownForm', event)">Go</button>
             		<button type="reset">Reset</button>
       		  </form>
-        <div id="countdown"></div>
+<div id="countdown"></div>
+
     </div>
     <main class="page-container">
         <div class="page-header">
@@ -27,15 +28,15 @@
         </div>
         <section>
             <div class="operations">
-                <div class="operation">
+                <div class="operation smiley-ops">
                     <h3>🤪 ops</h3>
-			<label for="connectionsFile">Smiley</label>
-                 	<input type="file" id="smileyOpsFile" accept=".xlsm"/>
+			<label for="connectionsFile"></label>
+                 	<input type="file" id="smileyOpsFile" accept=".xlsx"/>
                         <button onClick="handleGoBtnClick('smileyOps')">Go!</button>
                         <button onclick="splitCsvFile()" title="Split Csv File to 499 rows per file">(2) Split CSV(TEMP)</button>
                 </div>
 
-                <div class="operation" id="masiyamebatsa-operation">
+                <div class="operation masiyamebatsa">
                     <h3>מסיימי מבצע</h3>
                     <div class="btn-layout">
                         <form>
@@ -60,7 +61,7 @@
 		    <button onclick="removeHighlight('masiyamebatsa-operation')">Remove Highlight</button>
                 </div>
 
-                <div class="operation">
+                <div class="operation fox-dreams">
                     <h3>Fox Dreams Campaigns</h3>
 			<div class="btn-layout">
 			    <label for="connectionsFile">קובץ חיבורים</label>
@@ -77,7 +78,7 @@
                     <button onclick="loadUnions()">Go!</button>
                 </div>
 
-                <div class="operation">
+                <div class="operation netflix">
                     <h3>Netflix</h3>
                     <input type="file" id="netflix" />
                     <button onclick="testFlix()">Go!</button>
@@ -99,12 +100,10 @@
     </main>
 
 	<script src="main.js"></script>
+	<script src="prSmile.js"></script>
 	<script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
 	<script src="schedule.js"></script>
-	<script src="prSmile.js"></script>
 	
-
-
 	<!-- <script src="script.js"></script>  -->
 	<!-- <script src="EndPromos.js"></script> -->
 	<!-- <script src="main.js"></script> -->
@@ -113,7 +112,6 @@
 	<!-- <script src="dream.js">used</script> -->
 	<!-- <script src="split.js">used</script> -->
 	<!-- <script src="campaigns.js">used</script> -->
-	<!--  <script src="smileProm.js"></script> -->
 
 </body>
 

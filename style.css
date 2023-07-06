@@ -28,7 +28,7 @@
         align-items: center;
 	margin-bottom: 10px;
 	padding-bottom: 10px;
-	background: no-repeat 5% / 100% 100% url(HotNewLogo.svg.png);
+	background: no-repeat 5% / 100% 100%;
         flex-basis: 48%;
         margin-bottom: 20px;
 }
@@ -39,6 +39,7 @@
 
 .btn-layout {
         display: flex;
+	flex-direction: column;
         gap: 10px;
 }
 
@@ -91,4 +92,25 @@
 
 .completed {
 	background-color: lightgray;
+}
+
+.smiley-ops {
+  background-image: url(imgs/smiley.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+
+}
+
+.fox-dreams {
+  display: flex;
+  flex-direction: column;
+}
+
+.netflix {
+  color: red;
+  background-image: url(imgs/netflix.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
 }
