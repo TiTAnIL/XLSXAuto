@@ -1,5 +1,6 @@
 let connectionHeaders = null;
 let filteredRows = [];
+let groupedRows = null;
 let firstRow = null;
 
 function handleGoCampaigns(connectionsFile, campaignsFile) {
@@ -33,6 +34,54 @@ function loadCampaigns(file) {
   campaignsFile = file;
 }
 
+function processMatchingValues() {
+console.log('processMatching')
+  const categorizedRows = [];
+  for (const siteNumber in groupedRows) {
+    const rows = groupedRows[siteNumber];
+    const tvIndicationValues = [];
+    const internetIndicationValues = [];
+    const telephoneIndicationValues = [];
+    let hasCombinationChangeValueOne = false;
+
+    // Extract column values for categorization
+    rows.forEach((row) => {
+      const tvIndication = row[connectionHeaders.tvIndication];
+      const internetIndication = row[connectionHeaders.internetIndication];
+      const telephoneIndication = row[connectionHeaders.telephoneIndication];
+      const combinationChangeValue = row[connectionHeaders.combinationChangeValue];
+
+      tvIndicationValues.push(tvIndication);
+      internetIndicationValues.push(internetIndication);
+      telephoneIndicationValues.push(telephoneIndication);
+      if (combinationChangeValue === 1) {
+        hasCombinationChangeValueOne = true;
+      }
+    });
+
+    // Categorize rows based on column values
+    if (
+      tvIndicationValues.every((value) => value === 1) &&
+      internetIndicationValues.every((value) => value === 1) &&
+      telephoneIndicationValues.every((value) => value === 1)
+    ) {
+      categorizedRows.push(...rows.map((row) => ({ ...row, 'tri or due': 'triple' })));
+    } else if (
+      tvIndicationValues.includes(1) &&
+      internetIndicationValues.includes(1) &&
+      !telephoneIndicationValues.includes(2) &&
+      !hasCombinationChangeValueOne
+    ) {
+      categorizedRows.push(...rows.map((row) => ({ ...row, 'tri or due': 'double' })));
+    }
+  }
+
+  // Display categorized rows
+  console.log('Categorized Rows:', categorizedRows);
+
+  // Continue with further processing if needed
+}
+
 function processConnectionHeaders(worksheet) {
   console.log('Processing connection headers');
   const headers = {
@@ -57,10 +106,8 @@ function processConnectionHeaders(worksheet) {
     firstRow = firstRowData[0];
   }
 
-console.log(firstRowData)
-
   // Loop over the header values and set variables for column numbers
-  for (const cell in worksheet) {
+for (const cell in worksheet) {
     const cellRef = XLSX.utils.decode_cell(cell);
     if (cellRef.r === 0) {
       const headerValue = worksheet[cell].v;
@@ -103,7 +150,6 @@ console.log(firstRowData)
       }
     }
   }
-
   console.log('Connection headers:', headers); // Display the connection headers
   connectionHeaders = headers;
 
@@ -127,16 +173,18 @@ function filterConnectionData(worksheet, headers) {
     const isSiteTypeNotABAOrBEN = siteType !== 'ABA' && siteType !== 'BEN';
     const isProductCodeNotUNT = productCode !== 'UNT';
     const isWorkOrderCodeCN = workOrderCode === 'CN';
-	console.log(filteredRows)
-  groupedRows = {};
-  filteredRows.forEach((row) => {
-    const siteNumber = row[connectionHeaders.siteNumber];
-    if (!groupedRows[siteNumber]) {
-      groupedRows[siteNumber] = [];
-    }
-    groupedRows[siteNumber].push(row);
-  });
-	 processMatchingValues()
+
+    groupedRows = {};
+    filteredRows.forEach((row) => {
+      const siteNumber = row[connectionHeaders.siteNumber];
+      if (!groupedRows[siteNumber]) {
+        groupedRows[siteNumber] = [];
+      }
+      groupedRows[siteNumber].push(row);
+    });
+
+    processMatchingValues();
+
     return (
       isSalesExeOne &&
       isDcrdihNotResellers &&
