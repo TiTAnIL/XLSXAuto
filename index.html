@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>	
 <html>
 
 <head>
@@ -9,88 +9,109 @@
 </head>
 
 <body>
-	<button onclick="test()">test</button>
-	<div class="work-timer">
-		<h1>Worktime Counter</h1>
-		<form id="countdownForm">
-			<label for="meet">Till the great escape: </label>
-			<input type="time" id="time1" value="--:--">
-			<button type="submit">Go</button>
-			<button type="reset">Reset</button>
-		</form>
-		<div id="countdown"></div>
-	</div>
-	<main class="page-container">
-		<h1>Hello!</h1>
-		<h2>Choose your fate</h2>
-		<section>
-			<div class="operations">
 
-				<div class="operation">
-					<h3>🤪 ops</h3>
-					<div class="btn-layout">
-						<!-- <label title="load and proccess excel file" for="smileFile-btn">Load XLSX</label>  -->
-						<!-- <input type="file" id="smileFile" accept=".xlsx"> -->
-						<!-- <button onclick="processSmileFile(document.getElementById('smileFile').files[0])">GO!</button> -->
-						<!-- <label for="smileFile-btn">Load XLSX File:</label>-->
-						<!-- <input type="file" id="smileFile" accept=".xlsx">-->
-						<!-- <button onclick="processSmileFile(document.getElementById('smileFile').files[0])">GO!</button>-->
+	<div class="work-timer fixed-pos">
+        	<h1>Worktime Counter</h1>
+       		<form id="countdownForm">
+            		<label for="meet">Till the great escape: </label>
+            		<input type="time" id="time1" value="--:--">
+            		<button type="submit" onclick="handleGoBtnClick('countdownForm', event)">Go</button>
+            		<button type="reset">Reset</button>
+      		  </form>
+<div id="countdown"></div>
 
-						<!-- <button onclick="processFile(document.getElementById('smileFile').files[0]), 'output.xlsx', 'הוכנס לטיפול', ['A', 'B', 'D'])">New GO!</button> -->
-						<input type="file" id="file-input" />
-						<button onclick="processFile()">Process</button>
-						<button onclick="splitCsvFile()" title="Split Csv File to 499 rows per file">(2) Split CSV
-							(TEMP)</button>
+    </div>
+    <main class="page-container">
+        <div class="page-header">
+            <h1>Hello!</h1>
+            <h2>Choose your fate</h2>
+        </div>
+        <section>
+            <div class="operations">
+                <div class="operation smiley-ops">
+                    <h3>🤪 ops</h3>
+			<label for="connectionsFile"></label>
+                 	<input type="file" id="smileyOpsFile" accept=".xlsx"/>
+                        <button onClick="handleGoBtnClick('smileyOps')">Go!</button>
+                        <button onclick="splitCsvFile()" title="Split Csv File to 499 rows per file">(2) Split CSV(TEMP)</button>
+                </div>
 
-					</div>
-				</div>
+                <div class="operation masiyamebatsa">
+                    <h3>מסיימי מבצע</h3>
+                    <div class="btn-layout">
+                        <form>
+                            <label title="load and proccess excel file" for="r389">דוח389</label>
+                            <input type="file" id="r389" accept=".xlsx"><br>
+                            <label title="load and proccess excel file" for="indexFile">Index</label>
+                            <input type="file" id="indexFile" accept=".xlsx"><br>
+                            <label title="load and proccess excel file" for="codes">קודים לשכפול</label>
+                            <input type="file" id="codes" accept=".xlsx"><br>
+                        </form>
+                    </div>
+                    <div class="container">
+                        <label class="radio">
+                            <input type="radio" name="option" value="C1" onchange="handleCycle(event.target)"> Cycle 1
+                        </label>
+                        <label class="radio">
+                            <input type="radio" name="option" value="C16" onchange="handleCycle(event.target)"> Cycle 16
+                        </label>
+                    </div>
+                    <button> RUN MF RUN!</button>
+                    <button onclick="clearFiles()"> Clear files</button>
+		    <button onclick="removeHighlight('masiyamebatsa-operation')">Remove Highlight</button>
+                </div>
 
-				<div class="operation">
-					<h3>מסיימי מבצע</h3>
-					<div class="btn-layout">
+                <div class="operation fox-dreams">
+                    <h3>Fox Dreams Campaigns</h3>
+			<div class="btn-layout">
+			    <label for="connectionsFile">קובץ חיבורים</label>
+                 	    <input type="file" id="connectionsFile" accept=".xlsm"/>
+			    <label for="connectionsFile">קובץ קמפיינים</label>
+                 	    <input type="file" id="campaignsFile" accept=".xlsm"/>
+			</div>
+	  		   <button onClick="handleGoBtnClick('campaigns')">Dream on!</button>
+                </div>
 
-						<form>
-							<label title="load and proccess excel file for=" file1">דוח389</label>
-							<input type="file" id="r389" accept=".xlsx"><br></br>
+                <div class="operation">
+                    <h3>ועדים</h3>
+                    <input type="file" id="unions" />
+                    <button onclick="loadUnions()">Go!</button>
+                </div>
 
-							<label title="load and proccess excel file for=" file2">Index</label>
-							<input type="file" id="indexFile" accept=".xlsx"><br></br>
+                <div class="operation netflix">
+                    <h3>Netflix</h3>
+                    <input type="file" id="netflix" />
+                    <button onclick="testFlix()">Go!</button>
+                </div>
+               <div class="operation" id="hotnet-operation">
+                    <h3>HotNet</h3>
+                            <label title="load and proccess excel file" for="matz1">מצבה 1</label>
+                            <input type="file" id="matz1" accept=".xlsx"><br>
+                            <label title="load and proccess excel file" for="matz2">מצבה 2</label>
+                            <input type="file" id="matz2" accept=".xlsx"><br>
+                            <label title="load and proccess excel file" for="hotnet">הוטנט ספק</label>
+                            <input type="file" id="hotnet" accept=".xlsx"><br>
+                    <button onclick="testHotNet()">Go!</button>
+		    <button onclick="removeHighlight('hotnet-operation')">Remove Highlight</button>
+                </div>
+            </div>
+        </section>
 
-							<label title="load and proccess excel file for=" file3">קודים לשכפול</label>
-							<input type="file" id="codes" accept=".xlsx"><br></br>
-					</div>
-					<div class="container">
-						<label class="radio">
-							<input type="radio" name="option" value="C1" onchange="handleCycle(event.target)"> Cycle 1
-						</label>
-						<label class="radio">
-							<input type="radio" name="option" value="C16" onchange="handleCycle(event.target)"> Cycle 16
-						</label>
+    </main>
 
-					</div>
-					<button> RUN MF RUN!</button>
-					<button onclick="clearFiles()"> Clear files</button>
-				</div>
-
-				<div class="operation">
-					<h3>Dream Card</h3>
-					<input type="file" id="dream-file" />
-					<button onclick="loadDream()">Dream on</button>
-
-		</section>
-
-	</main>
-	<!-- <script src="script.js"></script>  -->
-	<!-- <script src="prSmile.js"></script> -->
+	<script src="main.js"></script>
+	<script src="prSmile.js"></script>
 	<script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
-
+	<script src="schedule.js"></script>
+	
+	<!-- <script src="script.js"></script>  -->
 	<!-- <script src="EndPromos.js"></script> -->
-	<!-- <script src="sndSmile.js"></script> -->
-	<script src="test.js"></script>
-	<script src="timer.js"></script>
-	<script src="dream.js"></script>
-	<script src="split.js"></script>
-	<script src="smileProm2.js"></script>
+	<!-- <script src="main.js"></script> -->
+	<!-- <script src="netflix.js">used</script> -->
+	<!-- <script src="timer.js">used</script> -->
+	<!-- <script src="dream.js">used</script> -->
+	<!-- <script src="split.js">used</script> -->
+	<!-- <script src="campaigns.js">used</script> -->
 
 </body>
 

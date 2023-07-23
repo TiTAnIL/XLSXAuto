@@ -1,11 +1,12 @@
 function downloadFile(data, filename) {
-  var element = document.createElement('a');
-  element.setAttribute('href', data);
-  element.setAttribute('download', filename);
-  element.style.display = 'none';
-  document.body.appendChild(element);
-  element.click();
-  document.body.removeChild(element);
+  var csvContent = 'data:text/csv;charset=utf-8,%EF%BB%BF' + encodeURIComponent(data);
+  var link = document.createElement('a');
+  link.setAttribute('href', csvContent);
+  link.setAttribute('download', filename + '.csv');
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
 
 function processFile() {
@@ -20,30 +21,22 @@ function processFile() {
       if (workbook.Sheets.hasOwnProperty(sheetName)) {
         var sheet = workbook.Sheets[sheetName];
         var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-        var headerRow = jsonData[ 3];
+        var headerRow = jsonData[3];
         var colTreat, colSiteNumInq, colSiteNum, colRepId, colInqNum;
 
-        // Step 4: Find the column indices based on header names
         headerRow.forEach(function (headerCellValue, index) {
-		//console.log(headerCellValue)
           switch (headerCellValue) {
-		
             case 'הוכנס טיפול':
               colTreat = index;
-
               break;
             case 'מספר אתר לפניה':
-		console.log(headerCellValue)
               colSiteNumInq = index;
-		console.log(colSiteNumInq)
               break;
             case 'תז נציג יוצר פניה':
               colRepId = index;
-
               break;
             case 'מספר פניה':
               colInqNum = index;
-
               break;
             default:
               break;
@@ -58,84 +51,63 @@ function processFile() {
           var row = jsonData[i];
           var hasValue = false;
 
-          // Check if any cell under the column "הוכנס טיפול" has a value
           if (row[colTreat]) {
             hasValue = true;
           }
 
-          // Check if the value under the column "מספר אתר לפניה" is a duplicate
           var siteNumInq = row[colSiteNumInq];
+          var repId = row[colRepId];
 
-          if (!uniqueValues.has(siteNumInq)) {
-            if (hasValue) {
-              deletedRows.push(row); // Add the row to the deleted rows array
-            } else {
-              uniqueValues.add(siteNumInq); // Add the value to the set of unique values
-              var modifiedRow = {};
+          if (typeof row[colInqNum] !== 'undefined' && typeof siteNumInq !== 'undefined' && typeof repId !== 'undefined') {
+            if (!uniqueValues.has(siteNumInq)) {
+              if (hasValue) {
+                // Add the row to the deleted rows array
+                // deletedRows.push(row);
+              } else {
+                uniqueValues.add(siteNumInq);
+                var modifiedRow = {};
 
-
-              modifiedRow['מספר פניה'] = row[colInqNum];
-              modifiedRow['מספר אסמכתא'] = '';
-              modifiedRow['מספר לקוח'] = '';
-              modifiedRow['מספר אתר'] = row[colSiteNum];
-              modifiedRow['קוד מהיר'] = '';
-              modifiedRow['מחלקה'] = '';
-              modifiedRow['תחום'] = '';
-              modifiedRow['סיווג ראשי'] = '';
-              modifiedRow['סיווג משני'] = '';
-              modifiedRow['סיווג מפורט'] = '';
-              modifiedRow['תקציר'] = '';
-              modifiedRow['גורם מטפל'] = '';
-              modifiedRow['נציג מטפל'] = row[colRepId];
-              modifiedRow['זיהוי נציג מוכר'] = '';
-              modifiedRow['זיהוי טיפול'] = sheetName === 'CSR' ? 31250 : 31251;
-              modifiedRow['תקציר טיפול'] = '';
-              modifiedRow['OPRID'] = row[colRepId];
-              modifiedRow['חשבונות משניים'] = '';
-              modifiedRow['קוד מבצע'] = '';
-              modifiedRow['תאריך סיום מבצע'] = '';
-              modifiedRows.push(modifiedRow);
+                modifiedRow['מספר פניה'] = row[colInqNum];
+                modifiedRow['מספר אסמכתא'] = '';
+                modifiedRow['מספר לקוח'] = '';
+                modifiedRow['מספר אתר'] = siteNumInq;
+                modifiedRow['קוד מהיר'] = '';
+                modifiedRow['מחלקה'] = '';
+                modifiedRow['תחום'] = '';
+                modifiedRow['סיווג ראשי'] = '';
+                modifiedRow['סיווג משני'] = '';
+                modifiedRow['סיווג מפורט'] = '';
+                modifiedRow['תקציר'] = '';
+                modifiedRow['גורם מטפל'] = '';
+                modifiedRow['נציג מטפל'] = repId;
+		modifiedRow['מספר פק"ע'] = '';
+		modifiedRow['פניה מקושרת'] = '';
+		modifiedRow['זיהוי נציג מוכר'] = '';
+                modifiedRow['זיהוי טיפול'] = sheetName === 'CSR' ? 31250 : 31251;
+                modifiedRow['תקציר טיפול'] = '';
+                modifiedRow['OPRID'] = repId;
+                modifiedRow['תאריך יצירה'] = '';
+                modifiedRow['ללא יצירת פניה חוזרת'] = '';
+                modifiedRow['חשבונות משניים'] = '';
+		modifiedRow['קוד מבצע'] = '';
+		modifiedRow['תאריך סיום'] = '';
+                modifiedRows.push(modifiedRow);
+              }
             }
           }
         }
 
-        // Step 9: Save each modified sheet as a separate file
         if (modifiedRows.length > 0) {
-          var newWorkbook = XLSX.utils.book_new();
-          var newSheet = XLSX.utils.json_to_sheet(modifiedRows, {
-            header: [
-              'מספר פניה',
-              'מספר אסמכתא',
-              'מספר לקוח',
-	      'מספר אתר',
-              'קוד מהיר',
-              'מחלקה',
-              'תחום',
-              'סיווג ראשי',
-              'סיווג משני',
-              'סיווג מפורט',
-	      'תקציר',
-              'גורם מטפל',
-              'נציג מטפל',
-              'מספר פק"ע',
-              'פניה מקושרת',
-              'זיהוי נציג מוכר',
-              'זיהוי טיפול',
-              'תקציר טיפול',
-              'OPRID',
-              'תאריך יצירה',
-	      'ללא יצירת פניה חוזרת',
-              'חשבונות משניים',
-              'קוד מבצע',
-              'תאריך סיום מבצע'
-            ]
-          });
+          var csvContent = '';
 
-          XLSX.utils.book_append_sheet(newWorkbook, newSheet, sheetName);
-          var newWorkbookData = XLSX.write(newWorkbook, { bookType: 'xlsx', type: 'array' });
-          var blob = new Blob([newWorkbookData], { type: 'application/octet-stream' });
-          var url = URL.createObjectURL(blob);
-          downloadFile(url, sheetName + '.xlsx');
+          csvContent += 'מספר פניה,מספר אסמכתא,מספר לקוח,מספר אתר,קוד מהיר,מחלקה,תחום,סיווג ראשי,סיווג משני,סיווג מפורט,תקציר,גורם מטפל,נציג מטפל,מספר פק"ע,פניה מקושרת,זיהוי נציג מוכר,זיהוי טיפול,תקציר טיפול,OPRID,תאריך יצירה,ללא יצירת פניה חוזרת,חשבונות משניים,קוד מבצע,תאריך סיום מבצע\n';
+
+          for (var i = 0; i < modifiedRows.length; i++) {
+            var row = modifiedRows[i];
+            csvContent += Object.values(row).map(cell => '"' + cell + '"').join(',') + '\n';
+	
+          }
+          downloadFile(csvContent, sheetName);
         }
       }
     }

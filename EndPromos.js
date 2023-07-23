@@ -1,7 +1,3 @@
-function test() {
-console.log('test working!')
-}
-
 
 // Load File 1 button
 document.getElementById("file1-btn").addEventListener("click", function() {
