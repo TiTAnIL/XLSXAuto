@@ -33,30 +33,29 @@
 			<label for="connectionsFile"></label>
                  	<input type="file" id="smileyOpsFile" accept=".xlsx"/>
                         <button onClick="handleGoBtnClick('smileyOps')">Go!</button>
-                        <button onclick="splitCsvFile()" title="Split Csv File to 499 rows per file">(2) Split CSV(TEMP)</button>
                 </div>
 
                 <div class="operation masiyamebatsa">
                     <h3>מסיימי מבצע</h3>
                     <div class="btn-layout">
                         <form>
-                            <label title="load and proccess excel file" for="r389">דוח389</label>
-                            <input type="file" id="r389" accept=".xlsx"><br>
+                            <label title="load and proccess excel file" for="r389File">דוח389</label>
+                            <input type="file" id="r389File" accept=".xlsx"><br>
                             <label title="load and proccess excel file" for="indexFile">Index</label>
                             <input type="file" id="indexFile" accept=".xlsx"><br>
-                            <label title="load and proccess excel file" for="codes">קודים לשכפול</label>
-                            <input type="file" id="codes" accept=".xlsx"><br>
+                            <label title="load and proccess excel file" for="codesFile">קודים לשכפול</label>
+                            <input type="file" id="codesFile" accept=".xlsx"><br>
                         </form>
                     </div>
                     <div class="container">
                         <label class="radio">
-                            <input type="radio" name="option" value="C1" onchange="handleCycle(event.target)"> Cycle 1
+                            <input type="radio" name="option" value="C1" onclick="handleCycle(event)"> Cycle 1
                         </label>
                         <label class="radio">
-                            <input type="radio" name="option" value="C16" onchange="handleCycle(event.target)"> Cycle 16
+                            <input type="radio" name="option" value="C16" onclick="handleCycle(event)"> Cycle 16
                         </label>
                     </div>
-                    <button> RUN MF RUN!</button>
+                    <button onclick="handleGoBtnClick('endPromos')"> RUN MF RUN!</button>
                     <button onclick="clearFiles()"> Clear files</button>
 		    <button onclick="removeHighlight('masiyamebatsa-operation')">Remove Highlight</button>
                 </div>
@@ -67,7 +66,7 @@
 			    <label for="connectionsFile">קובץ חיבורים</label>
                  	    <input type="file" id="connectionsFile" accept=".xlsm"/>
 			    <label for="connectionsFile">קובץ קמפיינים</label>
-                 	    <input type="file" id="campaignsFile" accept=".xlsm"/>
+                 	    <input type="file" id="campaignsFile" accept=".xlsx"/>
 			</div>
 	  		   <button onClick="handleGoBtnClick('campaigns')">Dream on!</button>
                 </div>
@@ -103,15 +102,16 @@
 	<script src="prSmile.js"></script>
 	<script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
 	<script src="schedule.js"></script>
-	
+	<script src="campaigns - Copy.js">used</script>
+	<script src="EndPromos.js"></script>
+
 	<!-- <script src="script.js"></script>  -->
-	<!-- <script src="EndPromos.js"></script> -->
 	<!-- <script src="main.js"></script> -->
 	<!-- <script src="netflix.js">used</script> -->
 	<!-- <script src="timer.js">used</script> -->
 	<!-- <script src="dream.js">used</script> -->
 	<!-- <script src="split.js">used</script> -->
-	<!-- <script src="campaigns.js">used</script> -->
+
 
 </body>
 

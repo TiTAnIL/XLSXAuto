@@ -1,5 +1,7 @@
 // Entry point of the process
-async function processEndPromos(files, cycle) {
+let selectedCycle = null;
+
+async function processEndPromos(files) {
 
   // Load and parse the data from each file
   // loop over files and load each one, the first file is r389, the second is index, the third is codes
@@ -26,7 +28,6 @@ async function processEndPromos(files, cycle) {
 
   // Compare data points from different objects and store the crossed data to a new object
   const crossedData = compareData(r389Data, indexData, codesData, columnIndexes);
-
   // Save the crossed data to a new file
   await saveToFile(crossedData, 'output.xlsx');
 }
@@ -51,8 +52,8 @@ async function loadAndParseFile(file) {
 }
 
 function handleCycle(event) {
-	const selectedOption = event.target.value;
-	console.log("Chosen Option:", selectedOption);
+  selectedCycle = event.target.value;
+  console.log(selectedCycle)
 }
 
 function findColumnIndex(data, column) {
@@ -60,10 +61,10 @@ function findColumnIndex(data, column) {
     const row = data[0];
     const index = row.findIndex((cell) => cell === column);
     if (index === -1) {
-      throw new Error(`Column ${column} not found`);
-    } // else {
-    //  console.log(`Column ${column} found at index ${index}`);
-    // }
+      console.error('Error:', error, '\n', 'Column:', column, '\n', 'Data:', data);
+    }  else {
+     console.error('Error:', error, '\n', 'Column:', column, '\n', 'Data:', data);
+    }
     return index;
   } catch (error) {
     console.error('Error:', error, '\n', 'Column:', column, '\n', 'Data:', data);
@@ -72,6 +73,51 @@ function findColumnIndex(data, column) {
 }
 
 function compareData(r389Data, indexData, codesData, columnIndexes) {
+  try {
+    if (!r389Data || !indexData || !codesData || !columnIndexes || !selectedCycle) {
+      throw new Error('Missing data');
+    }
+
+    const crossedData = [];
+
+    // Loop over the r389Data and compare it by the promotion code to the indexData,
+    // if there is a match, add the data from the r389Data and the indexDataTreatMethod from the indexData to the crossedData array
+    
+    // call saveToFile function with the crossedData array and the filename 'output.xlsx'
+    
+    for (let i = 1; i < r389Data.length; i++) {
+      const r389Row = r389Data[i];
+      const r389PromotionCode = r389Row[columnIndexes.r389DataPromotionCode];
+      const r389AccountNumber = r389Row[columnIndexes.r389AccountNumber];
+      const r389PromotionSeq = r389Row[columnIndexes.r389PromotionSeq];
+      const r389Bi = r389Row[columnIndexes.r389BillingCycle];
+      const r389PromoExpiteDate = r389Row[columnIndexes.r398PromoExpiteDate];
+
+      for (let j = 1; j < indexData.length; j++) {
+        const indexRow = indexData[j];
+        const indexDataPromotionCode = indexRow[columnIndexes.indexDataPromotionCode];
+        const indexDataTreatMethod = indexRow[columnIndexes.indexDataTreatMethod];
+        const indexDataExtantionPeriod = indexRow[columnIndexes.indexDataExtantionPeriod];
+        if (r389PromotionCode === indexDataPromotionCode && selectedCycle === r389Bi) {
+          crossedData.push({
+            r389AccountNumber ,
+            r389DataPromotionCode,
+            r389PromotionSeq,
+            r389Bi,
+            indexDataTreatMethod,
+            indexDataExtantionPeriod,
+            r389PromoExpiteDate
+          });
+        }
+      }
+    }
+    return crossedData;
+
+  } catch (error) {
+    console.error('Error:', error);
+    return;
+  }
+
   // Compare data points from the different objects and return the crossed data as a new object
   // create an empty array to store the crossed data
   // do an equelent to excel vlookup function on the r389Data and indexData by the promotion code and if there is a match, add to the array the data from the r389Data and the indexData.
@@ -81,5 +127,15 @@ function compareData(r389Data, indexData, codesData, columnIndexes) {
 }
 
 async function saveToFile(data, filename) {
-  // Save the data to a new file using xlsx
+  try {
+    if (!data || !filename) {
+      throw new Error('Missing data');
+    }
+    const workbook = XLSX.utils.book_new();
+    const sheet = XLSX.utils.json_to_sheet(data);
+    XLSX.utils.book_append_sheet(workbook, sheet, 'Sheet1');
+    XLSX.writeFile(workbook, filename);
+  } catch (error) {
+    console.error('Error:', error);
+  }
 }
